@@ -174,6 +174,25 @@ class Fraction:
 
         return self.__truediv__(other_f)
 
+    def __rtruediv__(self, other: int | float | Variable | Term | Expression | Fraction):
+        from expression import Expression
+        from term import Term
+        from variable import Variable
+
+        if isinstance(other, (int, float)):
+            return Fraction(self.denominator * other, self.numerator)
+        elif isinstance(other, (Variable, Term, Expression)):
+            other_f = Fraction(other, 1)
+        elif isinstance(other, Fraction):
+            return Fraction(
+                self.denominator * other.numerator,
+                self.numerator * other.denominator,
+            )
+        else:
+            raise TypeError("")
+
+        return self.__rtruediv__(other_f)
+
     """約分"""
 
     def _simplify(self):

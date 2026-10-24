@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import config
 from expression import Expression
+from fraction import Fraction
 from term import Term
 
 
@@ -62,11 +63,8 @@ class Variable:
     def __radd__(self, other):
         return self._add(other)
 
-    def _sub(self, other):
-        return self._add_and_sub(other, -1)
-
     def __sub__(self, other):
-        return self._sub(other)
+        return self._add_and_sub(other, -1)
 
     def __rsub__(self, other: int | float | Term | Expression | Variable):
         self_term = Term(exponent=1, coefficient=-1, variable=self)
@@ -119,3 +117,17 @@ class Variable:
             return Expression(self_term / other_term)
         else:
             raise TypeError(f"Unsupported type for 除法(之後改成英文): {type(other)}")
+
+    def __rtruediv__(self, other):
+        return Fraction(other, self)
+
+    """次方"""
+
+    def __pow__(self, other: int) -> int | Expression:
+        if isinstance(other, int):
+            if other < 0:
+                return Fraction(1, Expression(Term(abs(other), 1, self)))
+            if other == 0:
+                return 1
+            return Expression(Term(other, 1, self))
+        raise TypeError("exponent must be an integer")
